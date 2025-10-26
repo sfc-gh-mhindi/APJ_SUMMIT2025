@@ -119,9 +119,9 @@ GRANT SELECT ON TABLE TRANSACTIONS TO SHARE APJ_SUMMIT_TRANSACTIONS_SHARE;
 
 ## 🎯 **Success Handoff Criteria**
 
-### **DI → DM Handoff**
+### **DI → DT Handoff**
 ✅ CUSTOMERS table (1M rows) in Bronze  
-✅ ACCOUNTS table (1M rows) in Bronze  
+✅ ACCOUNTS table (5M rows) in Bronze  
 ✅ Data quality checks passed  
 
 ### **DM → DT Handoff**  
