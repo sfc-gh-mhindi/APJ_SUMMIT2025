@@ -334,23 +334,19 @@ CREATE SCHEMA IF NOT EXISTS APJ_SUMMIT.INTELLIGENCE;   -- AIML Lab
 ### **DI → DT Handoff**
 ✅ CUSTOMERS table (1M rows) in Bronze  
 ✅ ACCOUNTS table (5M rows) in Bronze  
-✅ Data quality checks passed  
 
 ### **DM → DT Handoff**  
 ✅ TRANSACTIONS table (50M rows) in Bronze  
 ✅ Data share accessible to participants  
-✅ Migration performance demonstrated  
 
 ### **DT → AIML Handoff**
-✅ DIM_CUSTOMERS in Silver layer  
-✅ DIM_ACCOUNTS in Silver layer  
-✅ FACT_TRANSACTIONS in Silver layer  
-✅ Data quality tests 100% passed  
+✅ DIM_CUSTOMERS (tentative) in Silver layer  
+✅ DIM_ACCOUNTS (tentative) in Silver layer  
+✅ FACT_TRANSACTIONS (tentative) in Silver layer  
 
 ### **AIML → Summit Complete**
-✅ Semantic models responding < 3 seconds  
+✅ Semantic models created
 ✅ AI insights generated successfully  
-✅ Interactive dashboard functional  
 ✅ Business value story completed  
 
 ---
