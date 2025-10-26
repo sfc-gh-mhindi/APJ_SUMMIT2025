@@ -31,6 +31,35 @@ This summit demonstrates a complete modern data pipeline using the **Medallion A
 | **CAS2** | Live Demo | `APJ_SUMMIT` | Presenter-driven |
 | **Sandboxes** | Hands-On Labs | `APJ_SUMMIT` | Participant-driven |
 
+### **Architecture Quick View**
+
+| Squad | Bronze Layer | Silver Layer | Gold Layer | Demo | Hands-On Lab |
+|-------|--------------|--------------|------------|------|--------------|
+| **DI** | ✅ INGESTION | - | - | ❌ | ✅ |
+| **DM** | ✅ MIGRATION | - | - | ✅ | 📊 Data Share |
+| **DT** | - | ✅ TRANSFORMED | - | ✅ | ✅ |
+| **AIML** | - | - | ✅ INTELLIGENCE | ✅ | ✅ |
+
+### **Schema Mapping by Environment**
+
+#### **CAS2 (Demo Environment)**
+```
+APJ_SUMMIT Database:
+├── INGESTION_TARGET     (DI - Pre-loaded)
+├── MIGRATION_TARGET     (DM - Demo target) 
+├── TRANSFORMED          (DT - Demo target)
+└── INTELLIGENCE         (AIML - Demo target)
+```
+
+#### **Sandboxes (Hands-On Lab Environment)**  
+```
+APJ_SUMMIT Database:
+├── INGESTION           (DI - Lab target)
+├── MIGRATION           (DM - Data share target)
+├── TRANSFORMED         (DT - Lab target)  
+└── INTELLIGENCE        (AIML - Lab target)
+```
+
 ---
 
 ## 📊 **Data Assets Overview**
@@ -38,7 +67,7 @@ This summit demonstrates a complete modern data pipeline using the **Medallion A
 | Dataset | Size | Source | Squads Using | Purpose |
 |---------|------|--------|--------------|---------|
 | **Customers** | 1M rows | Azure SQL Box A | DI → DT → AIML | Customer master data |
-| **Accounts** | 1M rows | Azure SQL Box A | DI → DT → AIML | Account master data |
+| **Accounts** | 5M rows | Azure SQL Box A | DI → DT → AIML | Account master data |
 | **Transactions** | 50M rows | Azure SQL Box B | DM → DT → AIML | Transaction fact data |
 
 ---
@@ -62,7 +91,7 @@ Demonstrate modern data ingestion patterns using Snowflake's native capabilities
 - **Target Schema**: `APJ_SUMMIT.INGESTION`
 - **Deliverables**:
   - Live ingestion of customers table (1M rows)
-  - Live ingestion of accounts table (1M rows)
+  - Live ingestion of accounts table (5M rows)
   - Data quality validation
   - Ingestion monitoring dashboard
 
@@ -75,13 +104,8 @@ LAYER: BRONZE
 
 -- Tables Created:
 - CUSTOMERS (1M rows)
-- ACCOUNTS (1M rows)
+- ACCOUNTS (5M rows)
 ```
-
-#### 📈 **Success Metrics**
-- ✅ 100% data ingestion success rate
-- ✅ < 5 minute ingestion time per table
-- ✅ Zero data quality issues detected
 
 ---
 
@@ -119,23 +143,6 @@ LAYER: BRONZE
 - TRANSACTIONS (50M rows)
 ```
 
-#### 📊 **Data Share Configuration**
-```sql
--- Data Share Setup (Pre-Summit)
-CREATE SHARE APJ_SUMMIT_TRANSACTIONS_SHARE;
-GRANT USAGE ON DATABASE APJ_SUMMIT TO SHARE APJ_SUMMIT_TRANSACTIONS_SHARE;
-GRANT USAGE ON SCHEMA MIGRATION_TARGET TO SHARE APJ_SUMMIT_TRANSACTIONS_SHARE;
-GRANT SELECT ON TABLE TRANSACTIONS TO SHARE APJ_SUMMIT_TRANSACTIONS_SHARE;
-
--- Participant Action Required
--- GET 'APJ_SUMMIT_TRANSACTIONS_SHARE' FROM MARKETPLACE;
-```
-
-#### 📈 **Success Metrics**
-- ✅ 50M rows migrated in < 10 minutes
-- ✅ Zero data loss during migration
-- ✅ All participants successfully access shared data
-
 ---
 
 ### **Squad 3: Data Transformation (DT)**
@@ -167,7 +174,7 @@ LAYER: SILVER
 
 -- Source Tables:
 - INGESTION.CUSTOMERS (1M rows)
-- INGESTION.ACCOUNTS (1M rows)  
+- INGESTION.ACCOUNTS (5M rows)  
 - MIGRATION.TRANSACTIONS (50M rows)
 
 -- Target Models:
@@ -176,44 +183,6 @@ LAYER: SILVER
 - FACT_TRANSACTIONS (business rules applied)
 - CUSTOMER_ACCOUNT_SUMMARY (aggregated)
 ```
-
-#### 🤖 **AI-Powered Transformation Examples**
-```python
-# Example DBT model generation with AI assistance
-# AI Prompt: "Create a DBT model that joins customers, accounts, and transactions 
-# to calculate monthly account balances with proper SCD Type 2 handling"
-
-{{ config(materialized='table') }}
-
-WITH customer_accounts AS (
-    SELECT 
-        c.customer_id,
-        c.customer_name,
-        a.account_id,
-        a.account_type,
-        a.account_status
-    FROM {{ ref('dim_customers') }} c
-    JOIN {{ ref('dim_accounts') }} a ON c.customer_id = a.customer_id
-),
-
-monthly_transactions AS (
-    SELECT 
-        account_id,
-        DATE_TRUNC('month', transaction_date) as month_year,
-        SUM(transaction_amount) as monthly_total,
-        COUNT(*) as transaction_count
-    FROM {{ ref('fact_transactions') }}
-    GROUP BY account_id, DATE_TRUNC('month', transaction_date)
-)
-
-SELECT * FROM customer_accounts ca
-LEFT JOIN monthly_transactions mt ON ca.account_id = mt.account_id
-```
-
-#### 📈 **Success Metrics**
-- ✅ 100% data quality tests pass
-- ✅ < 5 minute transformation runtime
-- ✅ AI generates 80%+ of transformation logic correctly
 
 ---
 
@@ -256,43 +225,22 @@ LAYER: GOLD
 - AI_INSIGHTS_DASHBOARD (Streamlit app)
 ```
 
-#### 🧠 **AI/ML Capabilities Demonstrated**
-```sql
--- 1. Semantic Model Creation
-CREATE SEMANTIC MODEL CUSTOMER_360_MODEL
-FROM (
-    SELECT * FROM TRANSFORMED.CUSTOMER_ACCOUNT_SUMMARY
-)
-WITH DIMENSIONS (customer_name, account_type, month_year)
-WITH MEASURES (monthly_total, transaction_count);
-
--- 2. Cortex AI Analysis
-SELECT 
-    customer_id,
-    SNOWFLAKE.CORTEX.COMPLETE(
-        'claude-3-5-sonnet',
-        'Analyze this customer transaction pattern and provide insights: ' || 
-        transaction_summary
-    ) AS ai_insights
-FROM INTELLIGENCE.CUSTOMER_TRANSACTION_PATTERNS;
-
--- 3. Natural Language Queries
-SELECT SNOWFLAKE.CORTEX.COMPLETE(
-    'snowflake-arctic',
-    'What are the top 5 customers by transaction volume this quarter?'
-) AS natural_language_query_result;
-```
-
 #### 📊 **Intelligence Deliverables**
 1. **Semantic Views**: Business-friendly data models
 2. **ML Models**: Customer segmentation, anomaly detection
 3. **AI Insights**: Automated analysis and recommendations
 4. **Interactive Dashboard**: Streamlit-powered analytics interface
 
-#### 📈 **Success Metrics**
-- ✅ Semantic models respond in < 3 seconds
-- ✅ AI insights generated with 95%+ accuracy
-- ✅ Natural language queries work for 90%+ of business questions
+---
+
+## 📋 **Squad Responsibilities Summary**
+
+| Squad | Mission | Demo Mode | Hands-On Lab Mode | Source Data | Target Schema | Layer | Key Deliverables |
+|-------|---------|-----------|-------------------|-------------|---------------|-------|------------------|
+| **DI** | Getting data from source systems into Snowflake | ❌ No Demo | ✅ Hands-On Lab Only | Azure SQL Box A | APJ_SUMMIT.INGESTION | Bronze | Live ingestion of customers (1M) & accounts (5M), data quality validation |
+| **DM** | Migrating large-scale legacy data efficiently | ✅ Demo Only | 📊 Data Share Distribution | Azure SQL Box B | APJ_SUMMIT.MIGRATION | Bronze | 50M transaction migration, data share setup |
+| **DT** | Turning raw data into business-ready insights | ✅ Live Demo | ✅ Hands-On Lab | INGESTION + MIGRATION | APJ_SUMMIT.TRANSFORMED | Silver | DIM_CUSTOMERS, DIM_ACCOUNTS, FACT_TRANSACTIONS |
+| **AIML** | From data to insights: AI-powered analytics | ✅ Live Demo | ✅ Hands-On Lab | TRANSFORMED | APJ_SUMMIT.INTELLIGENCE | Gold | Semantic views, ML models, AI insights dashboard |
 
 ---
 
@@ -313,18 +261,6 @@ graph LR
     style E fill:#c0c0c0
     style F fill:#ffd700
 ```
-
----
-
-## ⏱️ **Summit Timeline**
-
-| Time | Squad | Activity | Duration | Audience Interaction |
-|------|-------|----------|----------|---------------------|
-| **0:00-0:15** | DI | Ingestion Demo Setup | 15 min | Watch & Learn |
-| **0:15-0:30** | DM | Migration Demo | 15 min | Watch & Learn |
-| **0:30-0:50** | DT | Transformation Demo + Lab | 20 min | Demo + Hands-On |
-| **0:50-1:10** | AIML | Intelligence Demo + Lab | 20 min | Demo + Hands-On |
-| **1:10-1:20** | All | Q&A + Wrap-up | 10 min | Interactive |
 
 ---
 
@@ -390,6 +326,32 @@ CREATE SCHEMA IF NOT EXISTS APJ_SUMMIT.INTELLIGENCE;   -- AIML Lab
 - [ ] Demonstrates competitive advantages
 - [ ] Shows practical AI/ML business applications
 - [ ] Establishes thought leadership position
+
+---
+
+## 🎯 **Success Handoff Criteria**
+
+### **DI → DM Handoff**
+✅ CUSTOMERS table (1M rows) in Bronze  
+✅ ACCOUNTS table (5M rows) in Bronze  
+✅ Data quality checks passed  
+
+### **DM → DT Handoff**  
+✅ TRANSACTIONS table (50M rows) in Bronze  
+✅ Data share accessible to participants  
+✅ Migration performance demonstrated  
+
+### **DT → AIML Handoff**
+✅ DIM_CUSTOMERS in Silver layer  
+✅ DIM_ACCOUNTS in Silver layer  
+✅ FACT_TRANSACTIONS in Silver layer  
+✅ Data quality tests 100% passed  
+
+### **AIML → Summit Complete**
+✅ Semantic models responding < 3 seconds  
+✅ AI insights generated successfully  
+✅ Interactive dashboard functional  
+✅ Business value story completed  
 
 ---
 
