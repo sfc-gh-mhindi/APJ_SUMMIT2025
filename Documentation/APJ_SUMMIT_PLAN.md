@@ -331,7 +331,7 @@ CREATE SCHEMA IF NOT EXISTS APJ_SUMMIT.INTELLIGENCE;   -- AIML Lab
 
 ## 🎯 **Success Handoff Criteria**
 
-### **DI → DM Handoff**
+### **DI → DT Handoff**
 ✅ CUSTOMERS table (1M rows) in Bronze  
 ✅ ACCOUNTS table (5M rows) in Bronze  
 ✅ Data quality checks passed  
