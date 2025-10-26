@@ -235,7 +235,7 @@ LAYER: GOLD
 
 ## 📋 **Squad Responsibilities Summary**
 
-| Squad | Mission | Demo Mode | Hands-On Lab Mode | Source Data | Target Schema | Layer | Key Deliverables |
+| Squad | Mission | Demo Mode | Hands-On Lab Mode | Source Data | Hands-On Lab Target Schema | Layer | Key Deliverables |
 |-------|---------|-----------|-------------------|-------------|---------------|-------|------------------|
 | **DI** | Getting data from source systems into Snowflake | ❌ No Demo | ✅ Hands-On Lab Only | Azure SQL Box A | APJ_SUMMIT.INGESTION | Bronze | Live ingestion of customers (1M) & accounts (5M), data quality validation |
 | **DM** | Migrating large-scale legacy data efficiently | ✅ Demo Only | 📊 Data Share Distribution | Azure SQL Box B | APJ_SUMMIT.MIGRATION | Bronze | 50M transaction migration, data share setup |

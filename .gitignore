@@ -33,8 +33,3 @@ pip-delete-this-directory.txt
 *.tmp
 *.temp
 ~$*
-# Word temporary files
-~cd "/Users/mazenhindi/Library/CloudStorage/GoogleDrive-mazen.hindi@snowflake.com/My Drive/Work/Code Repos/SNOWFLAKE/APJ_SUMMIT/APJ_SUMMIT2025" && echo "# Word temporary files" >> .gitignore && echo "~$*" >> .gitignore && git add .gitignore && git commit -m "Update .gitignore to exclude Word temporary files
-
-- Added exclusion for Word temporary files (~$*)
-- Keeps repository clean when DOCX files are opened" && git push
